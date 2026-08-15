@@ -209,6 +209,7 @@ void cleanup(void) {
         set_devctx(&g_all_devctxs[i]);
         hostbuf_file_reader_cleanup();
         aimdo_wddm_cleanup();
+        va_pool_cleanup();
         allocations_cleanup();
 
         free(highest_priority_p); /* FIXME: move the model_vbar. */
@@ -242,6 +243,7 @@ bool init(const int *cuda_device_ids, const uint64_t *extra_vram_headrooms, size
         set_devctx(devctx);
 
         if (!allocations_init() ||
+            !va_pool_init() ||
             !CHECK_CU(cuDeviceGet(&dev, cuda_device_ids[i])) ||
             !CHECK_CU(cuDeviceTotalMem(&vram_capacity, dev))) {
             goto fail;
